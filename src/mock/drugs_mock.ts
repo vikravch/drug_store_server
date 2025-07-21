@@ -1,0 +1,9 @@
+export const mockDrug = {
+    id: "1",
+    dragName: "Pain Reliever",
+    price: 12.99,
+    count: 30,
+    storeId: "storeA",
+    description: "Effective relief for headaches and muscle pain."
+};
+
