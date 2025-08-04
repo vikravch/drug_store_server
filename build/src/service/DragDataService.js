@@ -44,10 +44,28 @@ const jsonDBDragDataService = {
         });
     },
     remove(id) {
-        return Promise.resolve(false);
+        return __awaiter(this, void 0, void 0, function* () {
+            const resultList = yield db.getData("/drags");
+            const newList = resultList.filter((item) => item.id != id);
+            if (resultList.length == newList.length)
+                return false;
+            else {
+                yield db.push('/drags', newList, true);
+                return true;
+            }
+        });
     },
     update(newDrag) {
-        return Promise.resolve(mockDrug);
+        return __awaiter(this, void 0, void 0, function* () {
+            const resultList = yield db.getData("/drags");
+            const index = resultList.findIndex(item => item.id == newDrag.id);
+            if (index == -1) {
+                throw new Error('Id not found');
+            }
+            resultList[index] = newDrag;
+            yield db.push('/drags', resultList, true);
+            return newDrag;
+        });
     }
 };
 export default jsonDBDragDataService;

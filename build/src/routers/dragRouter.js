@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { sendError } from "../utils/tools.js";
-import { TYPE_GET, TYPE_POST } from "../config/constants.js";
+import { TYPE_DELETE, TYPE_GET, TYPE_POST, TYPE_PUT } from "../config/constants.js";
 const PATH_DRUGS = "drugs";
 export const dragRouter = (req, res, controller) => __awaiter(void 0, void 0, void 0, function* () {
     const { url, method } = req;
@@ -29,9 +29,20 @@ export const dragRouter = (req, res, controller) => __awaiter(void 0, void 0, vo
                 controller.postDrags(req, res);
                 break;
             }
-            default:
-                sendError("Not found", res);
+            case PATH_DRUGS + TYPE_DELETE: {
+                const secondURLPathSegment = url === null || url === void 0 ? void 0 : url.split("/")[2];
+                if (secondURLPathSegment) {
+                    controller.deleteDrag(secondURLPathSegment, res);
+                }
+                else {
+                    sendError("Empty ID", res);
+                }
                 break;
+            }
+            case PATH_DRUGS + TYPE_PUT: {
+                controller.putDrag(req, res);
+                break;
+            }
         }
     }
     catch (e) {

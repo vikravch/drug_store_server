@@ -1,6 +1,6 @@
 import {IncomingMessage, ServerResponse} from "node:http";
 import {sendError} from "../utils/tools.ts";
-import {TYPE_GET, TYPE_POST} from "../config/constants.ts";
+import {TYPE_DELETE, TYPE_GET, TYPE_POST, TYPE_PUT} from "../config/constants.ts";
 import {DragController} from "../controllers/DragController.ts";
 
 const PATH_DRUGS = "drugs";
@@ -29,9 +29,21 @@ export const dragRouter =
                         controller.postDrags(req,res)
                     break
                 }
-                default:
-                    sendError("Not found", res);
-                    break;
+                case PATH_DRUGS + TYPE_DELETE: {
+                    const secondURLPathSegment = url?.split("/")[2];
+                    if (secondURLPathSegment) {
+                        controller.deleteDrag(
+                            secondURLPathSegment, res
+                        )
+                    } else {
+                        sendError("Empty ID", res);
+                    }
+                    break
+                }
+                case PATH_DRUGS + TYPE_PUT: {
+                        controller.putDrag(req,res)
+                    break
+                }
             }
         } catch (e) {
             sendError("Server error :(", res);

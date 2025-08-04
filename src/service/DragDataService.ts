@@ -40,11 +40,29 @@ const jsonDBDragDataService: DragDataService = {
         const resultList = await db.getData("/drags") as Array<Drag>;
         return Promise.resolve(resultList.find(drag => drag.id == id));
     },
-    remove(id: string): Promise<boolean> {
-        return Promise.resolve(false);
+    async remove(id: string): Promise<boolean> {
+        const resultList = await db.getData("/drags") as Array<Drag>;
+        const newList = resultList.filter(
+            (item)=> item.id != id
+        )
+        if(resultList.length == newList.length) return false;
+        else {
+            await db.push('/drags', newList, true)
+            return true;
+        }
     },
-    update(newDrag: Drag): Promise<Drag> {
-        return Promise.resolve(mockDrug);
+    async update(newDrag: Drag): Promise<Drag> {
+        const resultList = await db.getData("/drags") as Array<Drag>;
+        const index = resultList.findIndex(
+            item => item.id == newDrag.id
+        );
+        if (index == -1) {
+            throw new Error('Id not found');
+        }
+
+        resultList[index] = newDrag;
+        await db.push('/drags', resultList, true);
+        return newDrag;
     }
 }
 

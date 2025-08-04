@@ -10,13 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { createServer } from "node:http";
 import { BASE_PORT, BASE_URL } from "./config/configs.js";
 import { dragRouter } from "./routers/dragRouter.js";
-import dragDataService from "./service/DragDataService.js";
-import { DragControllerImpl } from "./controllers/DragController.js";
+import { sl } from "./sl.js";
+import { userRouter } from "./routers/userRouter.js";
 export const launchServer = () => {
     createServer((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        // drag router
-        const dragService = dragDataService;
-        const controller = new DragControllerImpl(dragService);
-        yield dragRouter(req, res, controller);
+        yield dragRouter(req, res, sl.dragController);
+        yield userRouter(req, res, sl.userController);
     })).listen(BASE_PORT, () => console.log(`Server runs at ${BASE_URL}:${BASE_PORT}`));
 };

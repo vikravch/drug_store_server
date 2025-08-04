@@ -14,6 +14,32 @@ export class DragControllerImpl {
     constructor(dragService) {
         this.dragService = dragService;
     }
+    putDrag(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const body = yield parseBody(req);
+                // validation comes here...
+                const response = yield repository.update(body);
+                res.writeHead(200, CONTENT_TYPE_JSON);
+                res.end(JSON.stringify(response));
+            }
+            catch (e) {
+                sendError("Wrong body", res);
+            }
+        });
+    }
+    deleteDrag(id, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const dragResult = yield repository.remove(id);
+            if (dragResult) {
+                res.writeHead(200, CONTENT_TYPE_JSON);
+                res.end(JSON.stringify(dragResult));
+            }
+            else {
+                sendError("Wrong ID", res);
+            }
+        });
+    }
     getDragsById(id, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const dragResult = yield repository.getById(id);

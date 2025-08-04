@@ -25,3 +25,12 @@ export function sendError(text: string, res: ServerResponse){
     res.writeHead(404, CONTENT_TYPE_TEXT);
     res.end(text);
 }
+
+export const isUserType = (obj:any):boolean => {
+    return (
+        typeof obj === 'object' &&
+        obj !== null &&
+        typeof obj.id === 'number' &&
+        typeof obj.userName === 'string'
+    );
+}

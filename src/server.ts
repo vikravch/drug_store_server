@@ -3,15 +3,16 @@ import {BASE_PORT, BASE_URL} from "./config/configs.ts";
 import {dragRouter} from "./routers/dragRouter.ts";
 import dragDataService from "./service/DragDataService.ts";
 import {DragControllerImpl} from "./controllers/DragController.ts";
+import {sl} from "./sl.ts";
+import {userRouter} from "./routers/userRouter.ts";
 
 export const launchServer = () => {
 
     createServer(async (req,
                         res) => {
-        // drag router
-        const dragService =  dragDataService;
-        const controller = new DragControllerImpl(dragService);
-        await dragRouter(req, res, controller);
+
+        await dragRouter(req, res, sl.dragController);
+        await userRouter(req, res, sl.userController);
 
     }).listen(BASE_PORT,
         () => console.log(`Server runs at ${BASE_URL}:${BASE_PORT}`)

@@ -22,3 +22,9 @@ export function sendError(text, res) {
     res.writeHead(404, CONTENT_TYPE_TEXT);
     res.end(text);
 }
+export const isUserType = (obj) => {
+    return (typeof obj === 'object' &&
+        obj !== null &&
+        typeof obj.id === 'number' &&
+        typeof obj.userName === 'string');
+};
