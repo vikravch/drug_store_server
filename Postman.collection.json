@@ -1,0 +1,252 @@
+{
+	"info": {
+		"_postman_id": "62aed88b-f531-4c41-a135-a7ff8a25bc9c",
+		"name": "Drag store",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4292105"
+	},
+	"item": [
+		{
+			"name": "Get users",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/users",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"id\": 2,\n    \"userName\": \"Test user modified\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/user?id=2",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"user"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"id\": 2,\n    \"userName\": \"Test user modified\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/user",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add user",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"id\": 2,\n    \"userName\": \"Test user 2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/user",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get drags",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/drags",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"drags"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add drag",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"id\": \"3\",\n        \"dragName\": \"Pain Reliever third\",\n        \"price\": 12.99,\n        \"count\": 50,\n        \"storeId\": \"storeB\",\n        \"description\": \"Effective relief for headaches and muscle pain.\"\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/drags",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"drags"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete drag",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/drags/3",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"drags",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update drag",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"id\": \"3\",\n        \"dragName\": \"Pain Reliever second\",\n        \"price\": 15,\n        \"count\": 50,\n        \"storeId\": \"storeTest\",\n        \"description\": \"Effective relief for headaches and muscle pain.\"\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3005/drugs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3005",
+					"path": [
+						"drugs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get one drag",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/drags/1",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"drags",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost:3005",
+			"type": "default"
+		}
+	]
+}

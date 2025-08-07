@@ -7,24 +7,24 @@ export const PATH_DRAGS = "/drags";
 
 export const dragRouterExpress = express.Router();
 
-dragRouterExpress.get('/', asyncHandler(async (req, res) => {
+dragRouterExpress.get('/', async (req, res) => {
     await sl.dragController.getDrags(res);
-}));
+});
 
-dragRouterExpress.get('/:id', asyncHandler(async (req, res) => {
+dragRouterExpress.get('/:id', async (req, res) => {
     const dragId = req.params.id;
     if (dragId){
         await sl.dragController.getDragsById(dragId, res);
     } else {
         await sl.dragController.getDrags(res);
     }
-}));
+});
 
 dragRouterExpress.post('/',
-    asyncHandler(async (req, res) => {
+    async (req, res) => {
         await sl.dragController.postDrags(req, res);
-    }));
-dragRouterExpress.delete('/:id', asyncHandler(async (req, res) => {
+    });
+dragRouterExpress.delete('/:id', async (req, res) => {
     const dragId = req.params.id;
     if (dragId) {
         await sl.dragController.deleteDrag(
@@ -33,7 +33,7 @@ dragRouterExpress.delete('/:id', asyncHandler(async (req, res) => {
     } else {
         sendError("Empty ID", res);
     }
-}));
-dragRouterExpress.put('/', asyncHandler(async (req, res) => {
+});
+dragRouterExpress.put('/', async (req, res) => {
     await sl.dragController.putDrag(req, res);
-}));
+});
