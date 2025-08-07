@@ -1,6 +1,7 @@
 import {IncomingMessage, ServerResponse} from "node:http";
 import {CONTENT_TYPE_TEXT} from "../config/constants.ts";
-
+import {Response} from "express";
+import {HttpError} from "../errors/HttpError.js";
 export const sayHi = (name:string):void => {
     console.log(`Hello ${name}`)
 }
@@ -21,9 +22,8 @@ export function parseBody(req: InstanceType<typeof IncomingMessage>) {
     })
 }
 
-export function sendError(text: string, res: ServerResponse){
-    res.writeHead(404, CONTENT_TYPE_TEXT);
-    res.end(text);
+export function sendError(text: string, res: Response){
+    throw new HttpError(404, text);
 }
 
 export const isUserType = (obj:any):boolean => {

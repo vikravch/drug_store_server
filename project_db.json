@@ -7,14 +7,6 @@
             "count": 30,
             "storeId": "storeA",
             "description": "Effective relief for headaches and muscle pain."
-        },
-        {
-            "id": "3",
-            "dragName": "Pain Reliever second",
-            "price": 15,
-            "count": 50,
-            "storeId": "storeTest",
-            "description": "Effective relief for headaches and muscle pain."
         }
     ],
     "users": []

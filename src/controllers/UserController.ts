@@ -4,113 +4,98 @@ import {isUserType, parseBody} from "../utils/tools.ts";
 import {myLogger} from "../utils/logger.ts";
 import {User} from "../model/User.ts";
 import {SERVER_URL} from "../config/configs.ts";
+import {HttpError} from "../errors/HttpError.js";
+import {Request,Response} from "express";
 
 export class UserController{
     constructor(private userService: UserService) { }
 
-    async addUser(req:IncomingMessage, res:ServerResponse){
-        const body =  await parseBody(req);
+    async addUser(req:Request, res:Response){
+        const body =  req.body;
         if(!isUserType(body)){
-            res.writeHead(400, {'Content-Type': 'text/html'})
-            res.end('Bad request: wrong params!')
             myLogger.log('Wrong params!')
-            return;
+            throw new HttpError (400, "Bad request: wrong params!");
         }
         const user = body as User;
         const isSuccess = await this.userService.addUser(user);
         if (isSuccess) {
-            res.writeHead(201, {'Content-Type': 'text/html'})
-            res.end(`Created`);
+            res.status(201).send(`Created`);
             myLogger.log(`User with id ${user.id} was added`);
             myLogger.save(`User with id ${user.id} was added`);
 
         } else {
-            res.writeHead(409, {'Content-Type': 'text/html'})
-            res.end('User already exists')
             myLogger.log('User already exists')
+            throw new HttpError (409, 'User already exists');
         }
     }
-    async removeUser(req:IncomingMessage, res:ServerResponse) {
+    async removeUser(req:Request, res:Response) {
         const url = new URL(req.url!, SERVER_URL);
         const param = url.searchParams.get('id');
 
         if(!param || Number.isNaN(parseInt(param))){
-            res.writeHead(400, {'Content-Type': 'text/html'})
-            res.end('Bad request: wrong params!')
             myLogger.log('Wrong params!')
+            throw new HttpError (400, "Bad request: wrong params!");
         }
         const id = parseInt(param!)
         try {
             const removed = await this.userService.removeUser(id);
-            res.writeHead(200, {'Content-Type': 'application/json'});
-            res.end(JSON.stringify(removed));
+            res.json(removed);
             myLogger.log(`User with id ${id} was removed from DB`);
             myLogger.save(`User with id ${id} was removed from DB`);
 
         } catch (e) {
             if(e === "404"){
-                res.writeHead(404, {'Content-Type': 'text/html'})
-                res.end(`User with id ${param} not found`)
                 myLogger.log(`User with id ${param} not found`);
+                throw new HttpError (404, `User with id ${param} not found`);
             }else{
-                res.writeHead(500, {'Content-Type': 'text/html'})
-                res.end('Unexpected server error')
                 myLogger.log(`Server error`);
                 myLogger.save(`Server error` + JSON.stringify(e));
+                throw new HttpError (500, `Server error`);
             }
         }
     }
-    async getAllUsers(req:IncomingMessage, res:ServerResponse){
+    async getAllUsers(req:Request, res:Response){
         const result = await this.userService.getAllUsers();
         console.log('controller getAllUsers result '+result);
-        res.writeHead(200, {'Content-Type': 'application/json'})
-        res.end(JSON.stringify(result));
+        res.json(result);
         myLogger.log(`All users responsed`);
     }
-    async getUserById(req:IncomingMessage, res:ServerResponse){
+    async getUserById(req:Request, res:Response){
         const url = new URL( req.url!, SERVER_URL);
         const param = url.searchParams.get('id');
         if(!param || Number.isNaN(parseInt(param))){
-            res.writeHead(400, {'Content-Type': 'text/html'})
-            res.end('Bad request: wrong params!');
-            myLogger.log('Wrong params!');
-
+            myLogger.log('Wrong params!')
+            throw new HttpError (400, "Bad request: wrong params!");
         }
         try {
             const user = await this.userService.getUserById(parseInt(param!));
-            res.writeHead(200, {'Content-Type': 'application/json'})
-            res.end(JSON.stringify(user));
+            res.json(user);
             myLogger.log(`User responsed`);
         } catch (e) {
             if(e === "404"){
-                res.writeHead(404, {'Content-Type': 'text/html'})
-                res.end(`User with id ${param} not found`)
                 myLogger.log(`User with id ${param} not found`);
+                throw new HttpError (404, `User with id ${param} not found`);
             }else{
-                res.writeHead(500, {'Content-Type': 'text/html'})
-                res.end('Unexpected server error')
                 myLogger.log(`Server error`);
                 myLogger.save(`Server error` + JSON.stringify(e));
+                throw new HttpError (500, `Server error`);
             }
         }
     }
-    async updateUser(req: IncomingMessage, res: ServerResponse) {
+    async updateUser(req:Request, res:Response) {
         const body = await parseBody(req) as User;
         try {
             await this.userService.updateUser(body);
-            res.writeHead(200, {'Content-Type': 'text/html'})
-            res.end('User was successfully updated');
+            res.status(200).send('User was successfully updated');
             myLogger.log(`User with id ${body.id} was updated`);
         } catch (e) {
             if(e === "404"){
-                res.writeHead(404, {'Content-Type': 'text/html'})
-                res.end(`User not found`)
-                myLogger.log(`User to update not found`);
+                myLogger.log(`User not found`);
+                throw new HttpError (404, `User not found`);
             }else{
-                res.writeHead(500, {'Content-Type': 'text/html'})
-                res.end('Unexpected server error');
                 myLogger.log(`Server error`);
                 myLogger.save(`Server error` + JSON.stringify(e));
+                throw new HttpError (500, `Server error`);
             }
         }
     }

@@ -1,61 +1,55 @@
-import {IncomingMessage, ServerResponse} from "node:http";
 import repository, {DragDataService} from "../service/DragDataService.ts";
-import {CONTENT_TYPE_JSON} from "../config/constants.ts";
-import {parseBody, sendError} from "../utils/tools.ts";
+import {sendError} from "../utils/tools.ts";
 import {Drag} from "../model/Drag.ts";
+import {Request,Response} from "express";
 
 export type DragController = {
-    getDrags: (res:ServerResponse) => void
-    getDragsById: (id: string, res:ServerResponse) => void
-    postDrags: (req: IncomingMessage, res:ServerResponse) => void
-    deleteDrag: (id: string, res: ServerResponse) => void
-    putDrag: (req: IncomingMessage, res:ServerResponse) => void
+    getDrags: (res:Response) => void
+    getDragsById: (id: string, res:Response) => void
+    postDrags: (req:Request, res:Response) => void
+    deleteDrag: (id: string, res:Response) => void
+    putDrag: (req:Request, res:Response) => void
 }
 
 export class DragControllerImpl implements DragController{
     constructor( private dragService: DragDataService ) {}
 
-    async putDrag(req: IncomingMessage, res: ServerResponse){
+    async putDrag(req:Request, res:Response){
         try{
-            const body = await parseBody(req);
+            const body = req.body;
             // validation comes here...
             const response = await repository.update(body as Drag);
-            res.writeHead(200, CONTENT_TYPE_JSON);
-            res.end(JSON.stringify(response));
+            res.send(response);
         } catch (e) {
             sendError("Wrong body", res);
         }
     }
-    async deleteDrag(id: string, res: ServerResponse){
+    async deleteDrag(id: string, res: Response){
         const dragResult = await repository.remove(id);
         if (dragResult) {
-            res.writeHead(200, CONTENT_TYPE_JSON);
-            res.end(JSON.stringify(dragResult));
+            res.send(dragResult);
         } else {
             sendError("Wrong ID", res);
         }
     }
-    async getDragsById(id: string, res: ServerResponse){
+    async getDragsById(id: string, res: Response){
         const dragResult = await repository.getById(id);
         if (dragResult){
-            res.writeHead(200, CONTENT_TYPE_JSON);
-            res.end(JSON.stringify(dragResult));
+            res.send(dragResult);
         } else {
             sendError("Wrong ID", res);
         }
     }
-    async getDrags(res: ServerResponse) {
+    async getDrags(res: Response) {
         const list = await this.dragService.getAll();
-        res.writeHead(200, CONTENT_TYPE_JSON);
-        res.end(JSON.stringify(list));
+        res.send(list);
     }
-    async postDrags(req: IncomingMessage, res: ServerResponse) {
+    async postDrags(req: Request, res: Response) {
         try{
-            const body = await parseBody(req);
+            const body = req.body;
             // validation comes here...
             const response = await repository.add(body as Drag);
-            res.writeHead(200, CONTENT_TYPE_JSON);
-            res.end(JSON.stringify(response));
+            res.send(response);
         } catch (e) {
             sendError("Wrong body", res);
         }
