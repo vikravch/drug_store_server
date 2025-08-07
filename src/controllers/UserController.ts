@@ -6,23 +6,21 @@ import {User} from "../model/User.ts";
 import {SERVER_URL} from "../config/configs.ts";
 import {HttpError} from "../errors/HttpError.js";
 import {Request,Response} from "express";
+import {userDtoSchema} from "../validator/joiSchema/userDtoSchema.js";
+import {userObjectValidate} from "../validator/userObjectValidate.js";
 
 export class UserController{
     constructor(private userService: UserService) { }
 
     async addUser(req:Request, res:Response){
         const body =  req.body;
-        if(!isUserType(body)){
-            myLogger.log('Wrong params!')
-            throw new HttpError (400, "Bad request: wrong params!");
-        }
+        userObjectValidate(body);
         const user = body as User;
         const isSuccess = await this.userService.addUser(user);
         if (isSuccess) {
             res.status(201).send(`Created`);
             myLogger.log(`User with id ${user.id} was added`);
             myLogger.save(`User with id ${user.id} was added`);
-
         } else {
             myLogger.log('User already exists')
             throw new HttpError (409, 'User already exists');
@@ -56,25 +54,21 @@ export class UserController{
     }
     async getAllUsers(req:Request, res:Response){
         const result = await this.userService.getAllUsers();
-        console.log('controller getAllUsers result '+result);
         res.json(result);
-        myLogger.log(`All users responsed`);
     }
-    async getUserById(req:Request, res:Response){
-        const url = new URL( req.url!, SERVER_URL);
-        const param = url.searchParams.get('id');
-        if(!param || Number.isNaN(parseInt(param))){
+    async getUserById(id: string, res:Response){
+        if(!id || Number.isNaN(parseInt(id))){
             myLogger.log('Wrong params!')
             throw new HttpError (400, "Bad request: wrong params!");
         }
         try {
-            const user = await this.userService.getUserById(parseInt(param!));
+            const user = await this.userService.getUserById(parseInt(id!));
             res.json(user);
             myLogger.log(`User responsed`);
         } catch (e) {
             if(e === "404"){
-                myLogger.log(`User with id ${param} not found`);
-                throw new HttpError (404, `User with id ${param} not found`);
+                myLogger.log(`User with id ${id} not found`);
+                throw new HttpError (404, `User with id ${id} not found`);
             }else{
                 myLogger.log(`Server error`);
                 myLogger.save(`Server error` + JSON.stringify(e));
@@ -83,7 +77,8 @@ export class UserController{
         }
     }
     async updateUser(req:Request, res:Response) {
-        const body = await parseBody(req) as User;
+        const body = req.body;
+        userObjectValidate(body);
         try {
             await this.userService.updateUser(body);
             res.status(200).send('User was successfully updated');

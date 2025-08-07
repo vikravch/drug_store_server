@@ -2,6 +2,8 @@ import repository, {DragDataService} from "../service/DragDataService.ts";
 import {sendError} from "../utils/tools.ts";
 import {Drag} from "../model/Drag.ts";
 import {Request,Response} from "express";
+import {dragObjectValidate} from "../validator/dragObjectValidate.js";
+import {HttpError} from "../errors/HttpError.js";
 
 export type DragController = {
     getDrags: (res:Response) => void
@@ -17,10 +19,13 @@ export class DragControllerImpl implements DragController{
     async putDrag(req:Request, res:Response){
         try{
             const body = req.body;
-            // validation comes here...
+            dragObjectValidate(body);
             const response = await repository.update(body as Drag);
             res.send(response);
         } catch (e) {
+            if (e instanceof HttpError) {
+                throw e;
+            }
             sendError("Wrong body", res);
         }
     }
@@ -47,10 +52,13 @@ export class DragControllerImpl implements DragController{
     async postDrags(req: Request, res: Response) {
         try{
             const body = req.body;
-            // validation comes here...
+            dragObjectValidate(body);
             const response = await repository.add(body as Drag);
             res.send(response);
         } catch (e) {
+            if (e instanceof HttpError) {
+                throw e;
+            }
             sendError("Wrong body", res);
         }
     }

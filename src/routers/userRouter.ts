@@ -11,8 +11,9 @@ export const PATH_LOGGER = "/logger";
 export const userRouterExpress = express.Router();
 userRouterExpress.get('/',
     async (req, res) => {
-        if(req.query.id) {
-            await sl.userController.getUserById(req, res)
+        const userId = req.query.id as string;
+        if(userId) {
+            await sl.userController.getUserById(userId, res)
         } else {
             throw new HttpError(410, 'No User Id');
         }

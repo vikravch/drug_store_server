@@ -7,6 +7,14 @@
             "count": 30,
             "storeId": "storeA",
             "description": "Effective relief for headaches and muscle pain."
+        },
+        {
+            "id": "0645b4e7-fc0c-44db-afdd-971dbd0722db",
+            "dragName": "Pain Reliever third",
+            "price": 12.99,
+            "count": 50,
+            "storeId": "be826075-1cf3-47a2-adb5-5949f87d7f10",
+            "description": "Effective relief for headaches and muscle pain."
         }
     ],
     "users": []
