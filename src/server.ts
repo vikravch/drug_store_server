@@ -18,7 +18,7 @@ export const launchServer = () => {
         () => console.log(`Server runs at ${BASE_URL}:${BASE_PORT}`))
     app.use(express.json())
     //app.use(cors())
-    const allowedOrigins = ['http://localhost:5173'];
+    const allowedOrigins = ['http://localhost:5173','http://localhost:8081'];
 
     app.use(cors({
         origin: function (origin, callback) {
