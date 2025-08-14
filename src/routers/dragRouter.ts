@@ -8,7 +8,12 @@ export const PATH_DRAGS = "/drags";
 export const dragRouterExpress = express.Router();
 
 dragRouterExpress.get('/', async (req, res) => {
-    await sl.dragController.getDrags(res);
+    const searchQuery = req.query.q;
+    if(searchQuery && typeof searchQuery === "string") {
+        await sl.dragController.findDrags(searchQuery as string, res);
+    } else {
+        await sl.dragController.getDrags(res);
+    }
 });
 
 dragRouterExpress.get('/:id', async (req, res) => {

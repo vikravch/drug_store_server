@@ -10,12 +10,25 @@ import {
     usersRouterExpress
 } from "./routers/userRouter.ts";
 import {dragRouterExpress, PATH_DRAGS} from "./routers/dragRouter.ts";
+import cors from 'cors';
 
 export const launchServer = () => {
     const app = express();
     app.listen(BASE_PORT,
         () => console.log(`Server runs at ${BASE_URL}:${BASE_PORT}`))
     app.use(express.json())
+    //app.use(cors())
+    const allowedOrigins = ['http://localhost:5173'];
+
+    app.use(cors({
+        origin: function (origin, callback) {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        }
+    }));
 
     app.use(PATH_USER, userRouterExpress);
     app.use(PATH_USERS, usersRouterExpress);
@@ -25,7 +38,7 @@ export const launchServer = () => {
 
     app.use((req, res) => {
         res.status(400).send("Bad request")
-    })
+    });
 
     app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
         if (err instanceof HttpError)

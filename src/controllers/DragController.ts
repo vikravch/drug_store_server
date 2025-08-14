@@ -1,7 +1,7 @@
 import repository, {DragDataService} from "../service/DragDataService.ts";
 import {sendError} from "../utils/tools.ts";
 import {Drag} from "../model/Drag.ts";
-import {Request,Response} from "express";
+import {Request, response, Response} from "express";
 import {dragObjectValidate} from "../validator/dragObjectValidate.js";
 import {HttpError} from "../errors/HttpError.js";
 
@@ -11,6 +11,7 @@ export type DragController = {
     postDrags: (req:Request, res:Response) => void
     deleteDrag: (id: string, res:Response) => void
     putDrag: (req:Request, res:Response) => void
+    findDrags: (query: string, res:Response) => void
 }
 
 export class DragControllerImpl implements DragController{
@@ -61,5 +62,14 @@ export class DragControllerImpl implements DragController{
             }
             sendError("Wrong body", res);
         }
+    }
+
+    async findDrags(query: string, res: Response){
+        const list = await this.dragService.getAll();
+        const resList = list.filter(item => {
+            return item.dragName.toLowerCase().includes(query.toLowerCase()) ||
+                item.description.toLowerCase().includes(query.toLowerCase());
+        })
+        res.send(resList);
     }
 }
