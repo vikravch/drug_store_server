@@ -8,44 +8,40 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { sendError } from "../utils/tools.js";
-import { TYPE_DELETE, TYPE_GET, TYPE_POST, TYPE_PUT } from "../config/constants.js";
-const PATH_DRUGS = "drugs";
-export const dragRouter = (req, res, controller) => __awaiter(void 0, void 0, void 0, function* () {
-    const { url, method } = req;
-    const firstURLPathSegment = url === null || url === void 0 ? void 0 : url.split("/")[1];
-    try {
-        switch (firstURLPathSegment + method) {
-            case PATH_DRUGS + TYPE_GET: {
-                const secondURLPathSegment = url === null || url === void 0 ? void 0 : url.split("/")[2];
-                if (secondURLPathSegment) {
-                    controller.getDragsById(secondURLPathSegment, res);
-                }
-                else {
-                    controller.getDrags(res);
-                }
-                break;
-            }
-            case PATH_DRUGS + TYPE_POST: {
-                controller.postDrags(req, res);
-                break;
-            }
-            case PATH_DRUGS + TYPE_DELETE: {
-                const secondURLPathSegment = url === null || url === void 0 ? void 0 : url.split("/")[2];
-                if (secondURLPathSegment) {
-                    controller.deleteDrag(secondURLPathSegment, res);
-                }
-                else {
-                    sendError("Empty ID", res);
-                }
-                break;
-            }
-            case PATH_DRUGS + TYPE_PUT: {
-                controller.putDrag(req, res);
-                break;
-            }
-        }
+import express from "express";
+import { sl } from "../sl.js";
+export const PATH_DRAGS = "/drags";
+export const dragRouterExpress = express.Router();
+dragRouterExpress.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const searchQuery = req.query.q;
+    if (searchQuery && typeof searchQuery === "string") {
+        yield sl.dragController.findDrags(searchQuery, res);
     }
-    catch (e) {
-        sendError("Server error :(", res);
+    else {
+        yield sl.dragController.getDrags(res);
     }
-});
+}));
+dragRouterExpress.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const dragId = req.params.id;
+    if (dragId) {
+        yield sl.dragController.getDragsById(dragId, res);
+    }
+    else {
+        yield sl.dragController.getDrags(res);
+    }
+}));
+dragRouterExpress.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield sl.dragController.postDrags(req, res);
+}));
+dragRouterExpress.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const dragId = req.params.id;
+    if (dragId) {
+        yield sl.dragController.deleteDrag(dragId, res);
+    }
+    else {
+        sendError("Empty ID", res);
+    }
+}));
+dragRouterExpress.put('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield sl.dragController.putDrag(req, res);
+}));

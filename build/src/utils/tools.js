@@ -1,4 +1,4 @@
-import { CONTENT_TYPE_TEXT } from "../config/constants.js";
+import { HttpError } from "../errors/HttpError.js";
 export const sayHi = (name) => {
     console.log(`Hello ${name}`);
 };
@@ -19,8 +19,7 @@ export function parseBody(req) {
     });
 }
 export function sendError(text, res) {
-    res.writeHead(404, CONTENT_TYPE_TEXT);
-    res.end(text);
+    throw new HttpError(404, text);
 }
 export const isUserType = (obj) => {
     return (typeof obj === 'object' &&

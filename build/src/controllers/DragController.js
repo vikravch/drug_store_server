@@ -8,8 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import repository from "../service/DragDataService.js";
-import { CONTENT_TYPE_JSON } from "../config/constants.js";
-import { parseBody, sendError } from "../utils/tools.js";
+import { sendError } from "../utils/tools.js";
+import { dragObjectValidate } from "../validator/dragObjectValidate.js";
+import { HttpError } from "../errors/HttpError.js";
 export class DragControllerImpl {
     constructor(dragService) {
         this.dragService = dragService;
@@ -17,13 +18,15 @@ export class DragControllerImpl {
     putDrag(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const body = yield parseBody(req);
-                // validation comes here...
+                const body = req.body;
+                dragObjectValidate(body);
                 const response = yield repository.update(body);
-                res.writeHead(200, CONTENT_TYPE_JSON);
-                res.end(JSON.stringify(response));
+                res.send(response);
             }
             catch (e) {
+                if (e instanceof HttpError) {
+                    throw e;
+                }
                 sendError("Wrong body", res);
             }
         });
@@ -32,8 +35,7 @@ export class DragControllerImpl {
         return __awaiter(this, void 0, void 0, function* () {
             const dragResult = yield repository.remove(id);
             if (dragResult) {
-                res.writeHead(200, CONTENT_TYPE_JSON);
-                res.end(JSON.stringify(dragResult));
+                res.send(dragResult);
             }
             else {
                 sendError("Wrong ID", res);
@@ -44,8 +46,7 @@ export class DragControllerImpl {
         return __awaiter(this, void 0, void 0, function* () {
             const dragResult = yield repository.getById(id);
             if (dragResult) {
-                res.writeHead(200, CONTENT_TYPE_JSON);
-                res.end(JSON.stringify(dragResult));
+                res.send(dragResult);
             }
             else {
                 sendError("Wrong ID", res);
@@ -55,22 +56,33 @@ export class DragControllerImpl {
     getDrags(res) {
         return __awaiter(this, void 0, void 0, function* () {
             const list = yield this.dragService.getAll();
-            res.writeHead(200, CONTENT_TYPE_JSON);
-            res.end(JSON.stringify(list));
+            res.send(list);
         });
     }
     postDrags(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const body = yield parseBody(req);
-                // validation comes here...
+                const body = req.body;
+                dragObjectValidate(body);
                 const response = yield repository.add(body);
-                res.writeHead(200, CONTENT_TYPE_JSON);
-                res.end(JSON.stringify(response));
+                res.send(response);
             }
             catch (e) {
+                if (e instanceof HttpError) {
+                    throw e;
+                }
                 sendError("Wrong body", res);
             }
+        });
+    }
+    findDrags(query, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const list = yield this.dragService.getAll();
+            const resList = list.filter(item => {
+                return item.dragName.toLowerCase().includes(query.toLowerCase()) ||
+                    item.description.toLowerCase().includes(query.toLowerCase());
+            });
+            res.send(resList);
         });
     }
 }
